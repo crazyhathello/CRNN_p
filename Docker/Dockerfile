@@ -1,6 +1,7 @@
 FROM pytorch/pytorch:1.9.0-cuda11.1-cudnn8-runtime
 
-RUN pip install -r requirements.txt
+COPY requirements.txt /tmp
+RUN pip install -r /tmp/requirements.txt
 RUN git clone https://github.com/crazyhathello/CRNN_p.git /CRNN_p
 WORKDIR /CRNN_p
 
