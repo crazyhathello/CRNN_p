@@ -14,13 +14,24 @@ from itertools import chain
 from collections import OrderedDict
 
 # set path
-data_path = "test/dy3_20211214"    # define UCF-101 RGB data path
-output_path = "./result/220504/dy3/F4_20211214"
+data_path = "/input"    # define UCF-101 RGB data path
+if os.environ["VIDEO_PATH"] is not None:
+    data_path = os.environ["VIDEO_PATH"]
+
+# output_path = "./result/220504/dy3/F4_20211214"
+output_path = "/postures"
+if os.environ["OUTPUT_PATH"] is not None:
+    output_path = os.environ["OUTPUT_PATH"]
 
 action_name_path = './action.txt'
-save_model_path = "./CRNN_ckpt/EfficientNet/20220413/"
-cnn_choose_epoch = "cnn_encoder_epoch32.pth"  
-rnn_choose_epoch = "rnn_decoder_epoch32.pth"
+
+cnn_choose_epoch = "cnn_encoder_epoch.pth"  
+if os.environ["CNN"] is not None:
+    cnn_choose_epoch = os.environ["CNN"]
+
+rnn_choose_epoch = "rnn_decoder_epoch.pth"
+if os.environ["RNN"] is not None:
+    rnn_choose_epoch = os.environ["RNN"]
 
 # EncoderCNN architecture
 CNN_fc_hidden1 = 1024
@@ -109,7 +120,7 @@ rnn_decoder = DecoderRNN(CNN_embed_dim=CNN_embed_dim, h_RNN_layers=RNN_hidden_la
 # print(rnn_decoder)
 # summary(rnn_decoder, input_size = (batch_size, 110, CNN_embed_dim))
 
-cnn_state_dict = torch.load(os.path.join(save_model_path, cnn_choose_epoch))
+cnn_state_dict = torch.load(cnn_choose_epoch)
 new_state_dict = OrderedDict()
 for k, v in cnn_state_dict.items():
     name = k[7:] # remove module.
@@ -117,7 +128,7 @@ for k, v in cnn_state_dict.items():
 cnn_state_dict = new_state_dict
 
 
-rnn_state_dict = torch.load(os.path.join(save_model_path, rnn_choose_epoch))
+rnn_state_dict = torch.load(rnn_choose_epoch)
 new_state_dict = OrderedDict()
 for k, v in rnn_state_dict.items():
     name = k[7:] # remove module.
